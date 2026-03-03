@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 20px;
+        }
+
+        .header img {
+            max-width: 100px;
+            margin-bottom: 15px;
+        }
+
+        .header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #000;
+            margin: 5px 0;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #0056b3;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+            border-color: #0056b3;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0056b3;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .btn-primary {
+            background-color: #0056b3;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #004494;
+        }
+
+        .btn-danger {
+            background-color: #d9534f;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #c9302c;
+        }
+
+        /* Modern Action Buttons */
+        .btn-modern {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+
+        .btn-modern:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-modern-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .btn-modern-primary {
+            background: linear-gradient(135deg, #3a7bd5 0%, #3a6073 100%);
+        }
+
+        .btn-modern-danger {
+            background: linear-gradient(135deg, #ed213a 0%, #93291E 100%);
+        }
+
+        .btn-modern-info {
+            background: linear-gradient(135deg, #1dd5ff 0%, #0096ff 100%);
+        }
+
+        .btn-modern-warning {
+            background: linear-gradient(135deg, #f12711 0%, #f5af19 100%);
+        }
+
+        .btn-modern-secondary {
+            background: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%);
+        }
+
+        #dynamicTitleDisplay {
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #d9534f;
+            text-transform: uppercase;
+        }
+
+        .points-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .point-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeInRow 0.2s ease;
+        }
+
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .point-number {
+            font-weight: 700;
+            color: #0056b3;
+            min-width: 22px;
+            text-align: right;
+            font-size: 0.95rem;
+        }
+
+        .point-row .form-control {
+            flex: 1;
+        }
+
+        .btn-remove-point {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-remove-point:hover {
+            background: #f1aeb5;
+        }
+
+        .btn-add-point {
+            margin-top: 4px;
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            border-radius: 4px;
+            padding: 5px 14px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-add-point:hover {
+            background: #abdde5;
+        }
+
+        .btn-add-point:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .points-hint {
+            font-size: 0.78rem;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .photo-slot {
+            border: 1.5px solid #c8d8f0;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            background: #f7faff;
+        }
+
+        .photo-slot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .photo-slot-num {
+            font-weight: 700;
+            color: #0056b3;
+            font-size: 0.95rem;
+        }
+
+        .photo-preview {
+            max-height: 80px;
+            border-radius: 5px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .btn-remove-slot {
+            background: none;
+            border: none;
+            color: #c0392b;
+            font-size: 0.82rem;
+            cursor: pointer;
+            padding: 2px 6px;
+        }
+
+        .btn-remove-slot:hover {
+            text-decoration: underline;
+        }
+
+        .co-level-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            white-space: nowrap;
+            margin-left: 6px;
+        }
+
+        .co-level-group label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .co-level-group input[type="radio"] {
+            accent-color: #0056b3;
+        }
+
+        /* RTE Styles */
+        .rte-toolbar {
+            background: #f8f9fa;
+            border: 1px solid #ced4da;
+            border-bottom: none;
+            padding: 8px;
+            border-radius: 4px 4px 0 0;
+            display: flex;
+            gap: 5px;
+        }
+
+        .rte-toolbar button {
+            background: white;
+            border: 1px solid #ced4da;
+            padding: 4px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .rte-toolbar button:hover {
+            background: #e2e6ea;
+        }
+
+        .rte-editor {
+            border: 1px solid #ced4da;
+            min-height: 120px;
+            padding: 10px;
+            border-radius: 0 0 4px 4px;
+            background: white;
+            outline: none;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .rte-editor:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="header" style="text-align: left;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                <div style="flex: 0 0 center;">
+                    <img src="/static/images/logo_rgm.png" alt="RGMCET Logo" id="collegeLogo"
+                        style="max-width: 100px; height: auto;"
+                        onerror="this.onerror=null; this.src='https://via.placeholder.com/90x110?text=Logo';">
+                </div>
+                <div style="text-align: center; flex: 1;">
+                    <h2
+                        style="margin: 0; font-family: 'Georgia', serif; color: #777; font-size: 1.4rem; font-weight: normal;">
+                        Rajeev Gandhi Memorial College of Engineering &amp; Technology</h2>
+                    <p style="margin: 2px 0; font-family: 'Georgia', serif; color: #777; font-size: 1.1rem;">
+                        (Autonomous)</p>
+                    <p style="margin: 2px 0 8px 0; font-family: 'Georgia', serif; color: #777; font-size: 1.1rem;">
+                        Nandyal-518501, Nandyal &ndash; Dt. AP. India</p>
+                    <h3
+                        style="margin: 0; font-family: 'Georgia', serif; color: #666; font-size: 1.25rem; font-weight: bold;">
+                        Department of Computer Science &amp; Engineering (Data Science)</h3>
+                </div>
+            </div>
+        </div>
+
+        <div id="dynamicTitleDisplay">REPORT</div>
+
+        <form id="reportForm" action="/generate_report" method="POST" enctype="multipart/form-data"
+            class="needs-validation" novalidate onsubmit="event.preventDefault();">
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <label for="reportTitle" class="form-label">Report Title *</label>
+                    <input type="text" class="form-control" id="reportTitle" name="reportTitle"
+                        placeholder="e.g. ONE-DAY(Online) TECHNICAL SEMINAR REPORT" required>
+                    <div class="invalid-feedback">Please enter the Report Title.</div>
+                </div>
+
+                <div class="section-title col-12">Event Details</div>
+
+                <div class="col-md-6">
+                    <label for="eventTitle" class="form-label">Title of Event *</label>
+                    <input type="text" class="form-control" id="eventTitle" name="eventTitle" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="eventDate" class="form-label">Date *</label>
+                    <input type="date" class="form-control" id="eventDate" name="eventDate" required>
+                </div>
+
+                <div class="col-md-12">
+                    <label for="venue" class="form-label">Venue *</label>
+                    <input type="text" class="form-control" id="venue" name="venue" required>
+                </div>
+
+                <div class="section-title col-12">Coordinators</div>
+
+                <div class="col-md-6">
+                    <label for="eventCoordinator" class="form-label">Event Coordinator *</label>
+                    <input type="text" class="form-control" id="eventCoordinator" name="eventCoordinator" required>
+                </div>
+
+                <!-- Faculty Coordinators -->
+                <div class="col-md-6">
+                    <label class="form-label">Faculty Coordinators <span class="points-hint">(optional, max
+                            4)</span></label>
+                    <div class="points-group" id="facultyGroup" data-min="0">
+                        <!-- starts empty; user adds entries -->
+                    </div>
+                    <button type="button" class="btn-add-point" id="addFacultyBtn" onclick="addFacultyPoint()">+ Add
+                        Coordinator</button>
+                    <div class="points-hint">Up to 4 faculty coordinators.</div>
+                </div>
+
+                <div class="section-title col-12">Resource Person</div>
+
+                <div class="col-md-6">
+                    <label for="resourcePersonName" class="form-label">Resource Person Name *</label>
+                    <input type="text" class="form-control" id="resourcePersonName" name="resourcePersonName" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="designation" class="form-label">Designation &amp; Organization *</label>
+                    <input type="text" class="form-control" id="designation" name="designation" required>
+                </div>
+
+                <div class="section-title col-12">Program Info</div>
+
+                <!-- Objectives -->
+                <div class="col-md-12">
+                    <label class="form-label">Objectives * <span class="points-hint">(min 3, max 4
+                            points)</span></label>
+                    <div class="points-group" id="objectivesGroup" data-min="3">
+                        <div class="point-row">
+                            <span class="point-number">1.</span>
+                            <input type="text" class="form-control" name="objectives" placeholder="Objective 1" required
+                                maxlength="300">
+                            <button type="button" class="btn-remove-point"
+                                onclick="removePoint(this, 'objectivesGroup')" style="visibility:hidden;">✕
+                                Remove</button>
+                        </div>
+                        <div class="point-row">
+                            <span class="point-number">2.</span>
+                            <input type="text" class="form-control" name="objectives" placeholder="Objective 2" required
+                                maxlength="300">
+                            <button type="button" class="btn-remove-point"
+                                onclick="removePoint(this, 'objectivesGroup')" style="visibility:hidden;">✕
+                                Remove</button>
+                        </div>
+                        <div class="point-row">
+                            <span class="point-number">3.</span>
+                            <input type="text" class="form-control" name="objectives" placeholder="Objective 3" required
+                                maxlength="300">
+                            <button type="button" class="btn-remove-point"
+                                onclick="removePoint(this, 'objectivesGroup')" style="visibility:hidden;">✕
+                                Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add-point" id="addObjectiveBtn"
+                        onclick="addPoint('objectivesGroup', 'objectives', 'addObjectiveBtn', 'Objective')">+ Add
+                        Point</button>
+                    <div class="points-hint">Min 3, up to 4 objectives.</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="targetAudience" class="form-label">Target Audience *</label>
+                    <input type="text" class="form-control" id="targetAudience" name="targetAudience" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="numParticipants" class="form-label">Number of Participants *</label>
+                    <input type="number" class="form-control" id="numParticipants" name="numParticipants" required>
+                </div>
+
+                <!-- Outcomes -->
+                <div class="col-md-12">
+                    <label class="form-label">Outcomes * <span class="points-hint">(min 3, max 4 points)</span></label>
+                    <div class="points-group" id="outcomesGroup" data-min="3">
+                        <div class="point-row">
+                            <span class="point-number">1.</span>
+                            <input type="text" class="form-control" name="outcomes" placeholder="Outcome 1" required
+                                maxlength="300">
+                            <button type="button" class="btn-remove-point" onclick="removePoint(this, 'outcomesGroup')"
+                                style="visibility:hidden;">✕ Remove</button>
+                        </div>
+                        <div class="point-row">
+                            <span class="point-number">2.</span>
+                            <input type="text" class="form-control" name="outcomes" placeholder="Outcome 2" required
+                                maxlength="300">
+                            <button type="button" class="btn-remove-point" onclick="removePoint(this, 'outcomesGroup')"
+                                style="visibility:hidden;">✕ Remove</button>
+                        </div>
+                        <div class="point-row">
+                            <span class="point-number">3.</span>
+                            <input type="text" class="form-control" name="outcomes" placeholder="Outcome 3" required
+                                maxlength="300">
+                            <button type="button" class="btn-remove-point" onclick="removePoint(this, 'outcomesGroup')"
+                                style="visibility:hidden;">✕ Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add-point" id="addOutcomeBtn"
+                        onclick="addPoint('outcomesGroup', 'outcomes', 'addOutcomeBtn', 'Outcome')">+ Add Point</button>
+                    <div class="points-hint">Min 3, up to 4 outcomes.</div>
+                </div>
+
+                <!-- Event mapping with course Objectives -->
+                <div class="col-md-12">
+                    <label class="form-label">Event mapping with course Objectives * <span class="points-hint">(min 3,
+                            max 5
+                            points)</span></label>
+                    <div class="points-group" id="coGroup">
+                        <div class="point-row co-row">
+                            <span class="point-number">1.</span>
+                            <input type="text" class="form-control" name="courseObjective"
+                                placeholder="Event mapping with course Objective 1" required maxlength="300">
+                            <div class="co-level-group">
+                                <label><input type="radio" name="courseObjLevel_1" value="Low" required> Low</label>
+                                <label><input type="radio" name="courseObjLevel_1" value="Medium"> Medium</label>
+                                <label><input type="radio" name="courseObjLevel_1" value="High"> High</label>
+                            </div>
+                            <button type="button" class="btn-remove-point" onclick="removeCOPoint(this)"
+                                style="visibility:hidden;">✕ Remove</button>
+                        </div>
+                        <div class="point-row co-row">
+                            <span class="point-number">2.</span>
+                            <input type="text" class="form-control" name="courseObjective"
+                                placeholder="Event mapping with course Objective 2" required maxlength="300">
+                            <div class="co-level-group">
+                                <label><input type="radio" name="courseObjLevel_2" value="Low" required> Low</label>
+                                <label><input type="radio" name="courseObjLevel_2" value="Medium"> Medium</label>
+                                <label><input type="radio" name="courseObjLevel_2" value="High"> High</label>
+                            </div>
+                            <button type="button" class="btn-remove-point" onclick="removeCOPoint(this)"
+                                style="visibility:hidden;">✕ Remove</button>
+                        </div>
+                        <div class="point-row co-row">
+                            <span class="point-number">3.</span>
+                            <input type="text" class="form-control" name="courseObjective"
+                                placeholder="Event mapping with course Objective 3" required maxlength="300">
+                            <div class="co-level-group">
+                                <label><input type="radio" name="courseObjLevel_3" value="Low" required> Low</label>
+                                <label><input type="radio" name="courseObjLevel_3" value="Medium"> Medium</label>
+                                <label><input type="radio" name="courseObjLevel_3" value="High"> High</label>
+                            </div>
+                            <button type="button" class="btn-remove-point" onclick="removeCOPoint(this)"
+                                style="visibility:hidden;">✕ Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add-point" id="addCOBtn" onclick="addCOPoint()">+ Add
+                        Point</button>
+                    <div class="points-hint">Min 3, up to 5 Event mapping with course objectives. Select level for each.
+                    </div>
+                </div>
+
+                <!-- Theory Outcomes -->
+                <div class="col-md-12">
+                    <label class="form-label">Theory Outcomes * <span class="points-hint">(min 3, max 4
+                            points)</span></label>
+                    <div class="points-group" id="toGroup">
+                        <div class="point-row to-row">
+                            <span class="point-number">1.</span>
+                            <input type="text" class="form-control" name="theoryOutcome" placeholder="Theory Outcome 1"
+                                required maxlength="300">
+                            <div class="co-level-group">
+                                <label><input type="radio" name="theoryOutcomeYN_1" value="Yes" required> Yes</label>
+                                <label><input type="radio" name="theoryOutcomeYN_1" value="No"> No</label>
+                            </div>
+                            <button type="button" class="btn-remove-point" onclick="removeTOPoint(this)"
+                                style="visibility:hidden;">✕ Remove</button>
+                        </div>
+                        <div class="point-row to-row">
+                            <span class="point-number">2.</span>
+                            <input type="text" class="form-control" name="theoryOutcome" placeholder="Theory Outcome 2"
+                                required maxlength="300">
+                            <div class="co-level-group">
+                                <label><input type="radio" name="theoryOutcomeYN_2" value="Yes" required> Yes</label>
+                                <label><input type="radio" name="theoryOutcomeYN_2" value="No"> No</label>
+                            </div>
+                            <button type="button" class="btn-remove-point" onclick="removeTOPoint(this)"
+                                style="visibility:hidden;">✕ Remove</button>
+                        </div>
+                        <div class="point-row to-row">
+                            <span class="point-number">3.</span>
+                            <input type="text" class="form-control" name="theoryOutcome" placeholder="Theory Outcome 3"
+                                required maxlength="300">
+                            <div class="co-level-group">
+                                <label><input type="radio" name="theoryOutcomeYN_3" value="Yes" required> Yes</label>
+                                <label><input type="radio" name="theoryOutcomeYN_3" value="No"> No</label>
+                            </div>
+                            <button type="button" class="btn-remove-point" onclick="removeTOPoint(this)"
+                                style="visibility:hidden;">✕ Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add-point" id="addTOBtn" onclick="addTOPoint()">+ Add
+                        Point</button>
+                    <div class="points-hint">Min 3, up to 4 theory outcomes. Select Yes/No for each.</div>
+                </div>
+
+
+                <!-- Lab Outcomes (Optional) -->
+                <div class="col-md-12">
+                    <label class="form-label">Lab Outcomes <span class="points-hint">(Optional, min 3, max 4 points if
+                            added)</span></label>
+                    <div class="points-group" id="loGroup">
+                        <!-- initially empty because it is optional -->
+                    </div>
+                    <button type="button" class="btn-add-point" id="addLOBtn" onclick="addLOPoint()">+ Add
+                        Point</button>
+                    <div class="points-hint">If added: min 3, up to 4 lab outcomes. Select Yes/No for each.</div>
+                </div>
+
+                <!-- Conclusion -->
+                <div class="col-md-12">
+                    <label class="form-label">Conclusion *</label>
+                    <div class="rte-toolbar">
+                        <button type="button" onclick="document.execCommand('bold', false, null)"
+                            title="Bold"><b>B</b></button>
+                        <button type="button" onclick="document.execCommand('italic', false, null)"
+                            title="Italic"><i>I</i></button>
+                        <button type="button" onclick="document.execCommand('underline', false, null)"
+                            title="Underline"><u>U</u></button>
+                        <select
+                            onchange="if(this.value) { document.execCommand('hiliteColor', false, this.value); this.selectedIndex=0; }"
+                            style="padding:2px 4px; border:1px solid #ced4da; border-radius:4px; font-weight:bold; cursor:pointer;"
+                            title="Highlight text background">
+                            <option value="">A🖍️</option>
+                            <option value="yellow" style="background: yellow;">Yellow</option>
+                            <option value="lime" style="background: lime;">Green</option>
+                            <option value="cyan" style="background: cyan;">Cyan</option>
+                            <option value="pink" style="background: pink;">Pink</option>
+                        </select>
+                    </div>
+                    <div id="conclusionParagraphEditor" class="rte-editor" contenteditable="true"
+                        oninput="limitRTEWords(this, 55)"></div>
+                    <input type="hidden" id="conclusionParagraph" name="conclusionParagraph">
+                    <div class="points-hint">max 55 words</div>
+                </div>
+
+                <div class="section-title col-12">Photographs</div>
+                <div class="col-12 text-muted mb-2" style="font-size: 0.9rem;">
+                    Please upload exactly 4 images for the complete professional photo section. These will be placed
+                    together on a single new page (e.g. page 3) in a 2x2 bordered grid.
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Photo 1 (Top Left) *</label>
+                    <input type="file" class="form-control" name="photo1" accept="image/*" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Photo 2 (Top Right) *</label>
+                    <input type="file" class="form-control" name="photo2" accept="image/*" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Photo 3 (Bottom Left) *</label>
+                    <input type="file" class="form-control" name="photo3" accept="image/*" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Photo 4 (Bottom Right) *</label>
+                    <input type="file" class="form-control" name="photo4" accept="image/*" required>
+                </div>
+
+                <div class="section-title col-12">Signatures</div>
+
+                <div class="col-md-12">
+                    <label for="hodName" class="form-label">HoD Name *</label>
+                    <input type="text" class="form-control" id="hodName" name="hodName" required>
+                </div>
+
+                <div class="col-12 text-center mt-5" id="actionContainer">
+                    <button type="button" class="btn-modern btn-modern-success px-4 me-3" id="generateBtn"
+                        onclick="generateReport()" style="font-size: 1.1rem; padding: 14px 32px;">Generate
+                        Report</button>
+                </div>
+                <div class="col-12 text-center mt-5" id="downloadContainer" style="display: none;">
+                    <h4 class="text-success mb-4" style="font-weight: 700;">Report Generated Successfully!</h4>
+                    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                        <a href="#" id="previewPdfBtn" class="btn-modern btn-modern-info" target="_blank">Preview
+                            PDF</a>
+                        <a href="#" id="downloadWordBtn" class="btn-modern btn-modern-primary">Download Word</a>
+                        <a href="#" id="downloadPdfBtn" class="btn-modern btn-modern-danger">Download PDF</a>
+                        <button type="button" class="btn-modern btn-modern-warning" onclick="editForm()">Edit
+                            Details</button>
+                        <button type="button" class="btn-modern btn-modern-secondary" onclick="resetForm()">Create
+                            New</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <footer class="text-center mt-5 mb-3 text-muted" style="font-size: 0.95rem;">
+        <strong>Developed by J.V.Dinesh (23091A32J1) & P.Shabaj (23091A32D3)</strong>
+    </footer>
+
+    <script>
+        /* ---- Dynamic Word Limit for Rich Text ---- */
+        let lastValidHTML = "";
+        function limitRTEWords(field, maxWords) {
+            let text = field.innerText || field.textContent;
+            let wordMatches = [...text.matchAll(/\S+/g)];
+            if (wordMatches.length > maxWords) {
+                // Instantly undo the action that pushed it over the limit
+                document.execCommand('undo', false, null);
+                // Fallback catch if undo doesn't immediately reflect
+                let checkText = field.innerText || field.textContent;
+                if ([...checkText.matchAll(/\S+/g)].length > maxWords) {
+                    field.innerHTML = lastValidHTML;
+                    let range = document.createRange();
+                    let sel = window.getSelection();
+                    range.selectNodeContents(field);
+                    range.collapse(false);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }
+            } else {
+                lastValidHTML = field.innerHTML;
+            }
+        }
+
+        /* ---- Event mapping with course Objectives (min 3, max 5, with level radio) ---- */
+        const MAX_CO = 5;
+        const MIN_CO = 3;
+
+        function renumberCO() {
+            const group = document.getElementById('coGroup');
+            const rows = group.querySelectorAll('.co-row');
+            rows.forEach((row, idx) => {
+                const num = idx + 1;
+                row.querySelector('.point-number').textContent = num + '.';
+                row.querySelector('input[type="text"]').placeholder = `Event mapping with course Objective ${num}`;
+                row.querySelectorAll('input[type="radio"]').forEach(r => { r.name = `courseObjLevel_${num}`; });
+                row.querySelector('.btn-remove-point').style.visibility = rows.length > MIN_CO ? 'visible' : 'hidden';
+            });
+        }
+
+        function addCOPoint() {
+            const group = document.getElementById('coGroup');
+            const rows = group.querySelectorAll('.co-row');
+            if (rows.length >= MAX_CO) return;
+            const num = rows.length + 1;
+            const row = document.createElement('div');
+            row.className = 'point-row co-row';
+            row.innerHTML = `
+                <span class="point-number">${num}.</span>
+                <input type="text" class="form-control" name="courseObjective"
+                       placeholder="Event mapping with course Objective ${num}" required maxlength="300">
+                <div class="co-level-group">
+                    <label><input type="radio" name="courseObjLevel_${num}" value="Low" required> Low</label>
+                    <label><input type="radio" name="courseObjLevel_${num}" value="Medium"> Medium</label>
+                    <label><input type="radio" name="courseObjLevel_${num}" value="High"> High</label>
+                </div>
+                <button type="button" class="btn-remove-point" onclick="removeCOPoint(this)">&#10005; Remove</button>
+            `;
+            group.appendChild(row);
+            renumberCO();
+            if (group.querySelectorAll('.co-row').length >= MAX_CO)
+                document.getElementById('addCOBtn').disabled = true;
+            row.querySelector('input[type="text"]').focus();
+        }
+
+        function removeCOPoint(btn) {
+            const group = document.getElementById('coGroup');
+            if (group.querySelectorAll('.co-row').length <= MIN_CO) return;
+            btn.closest('.co-row').remove();
+            renumberCO();
+            document.getElementById('addCOBtn').disabled = false;
+        }
+
+        /* ---- Theory Outcomes (min 3, max 4, Yes/No radio) ---- */
+        const MAX_TO = 4;
+        const MIN_TO = 3;
+
+        function renumberTO() {
+            const group = document.getElementById('toGroup');
+            const rows = group.querySelectorAll('.to-row');
+            rows.forEach((row, idx) => {
+                const num = idx + 1;
+                row.querySelector('.point-number').textContent = num + '.';
+                row.querySelector('input[type="text"]').placeholder = `Theory Outcome ${num}`;
+                row.querySelectorAll('input[type="radio"]').forEach(r => { r.name = `theoryOutcomeYN_${num}`; });
+                row.querySelector('.btn-remove-point').style.visibility = rows.length > MIN_TO ? 'visible' : 'hidden';
+            });
+        }
+
+        function addTOPoint() {
+            const group = document.getElementById('toGroup');
+            const rows = group.querySelectorAll('.to-row');
+            if (rows.length >= MAX_TO) return;
+            const num = rows.length + 1;
+            const row = document.createElement('div');
+            row.className = 'point-row to-row';
+            row.innerHTML = `
+                <span class="point-number">${num}.</span>
+                <input type="text" class="form-control" name="theoryOutcome"
+                       placeholder="Theory Outcome ${num}" required maxlength="300">
+                <div class="co-level-group">
+                    <label><input type="radio" name="theoryOutcomeYN_${num}" value="Yes" required> Yes</label>
+                    <label><input type="radio" name="theoryOutcomeYN_${num}" value="No"> No</label>
+                </div>
+                <button type="button" class="btn-remove-point" onclick="removeTOPoint(this)">&#10005; Remove</button>
+            `;
+            group.appendChild(row);
+            renumberTO();
+            if (group.querySelectorAll('.to-row').length >= MAX_TO)
+                document.getElementById('addTOBtn').disabled = true;
+            row.querySelector('input[type="text"]').focus();
+        }
+
+        function removeTOPoint(btn) {
+            const group = document.getElementById('toGroup');
+            if (group.querySelectorAll('.to-row').length <= MIN_TO) return;
+            btn.closest('.to-row').remove();
+            renumberTO();
+            document.getElementById('addTOBtn').disabled = false;
+        }
+
+        /* ---- Lab Outcomes (min 3, max 4, Yes/No radio, Optional) ---- */
+        const MAX_LO = 4;
+        const MIN_LO = 3;
+
+        function renumberLO() {
+            const group = document.getElementById('loGroup');
+            const rows = group.querySelectorAll('.lo-row');
+            rows.forEach((row, idx) => {
+                const num = idx + 1;
+                row.querySelector('.point-number').textContent = num + '.';
+                row.querySelector('input[type="text"]').placeholder = `Lab Outcome ${num}`;
+                row.querySelectorAll('input[type="radio"]').forEach(r => { r.name = `labOutcomeYN_${num}`; });
+                row.querySelector('.btn-remove-point').style.visibility = rows.length > MIN_LO ? 'visible' : 'hidden';
+
+                // Optional logic: if the user removes everything, hide the remaining validation and remove buttons
+                if (rows.length === 0) {
+                    // handled by total removal
+                }
+            });
+        }
+
+        function addLOPoint() {
+            const group = document.getElementById('loGroup');
+            let rows = group.querySelectorAll('.lo-row');
+
+            // If starting from 0, auto-add MIN_LO rows
+            if (rows.length === 0) {
+                for (let i = 0; i < MIN_LO; i++) {
+                    const row = document.createElement('div');
+                    row.className = 'point-row lo-row';
+                    row.innerHTML = `
+                        <span class="point-number">${i + 1}.</span>
+                        <input type="text" class="form-control" name="labOutcome"
+                               placeholder="Lab Outcome ${i + 1}" required maxlength="300">
+                        <div class="co-level-group">
+                            <label><input type="radio" name="labOutcomeYN_${i + 1}" value="Yes" required> Yes</label>
+                            <label><input type="radio" name="labOutcomeYN_${i + 1}" value="No"> No</label>
+                        </div>
+                        <button type="button" class="btn-remove-point" onclick="removeLOPoint(this)">&#10005; Remove</button>
+                    `;
+                    group.appendChild(row);
+                }
+
+                // Add an overarching close button
+                if (!document.getElementById('clearLOBtn')) {
+                    const clearBtn = document.createElement('button');
+                    clearBtn.type = 'button';
+                    clearBtn.id = 'clearLOBtn';
+                    clearBtn.className = 'btn-remove-point';
+                    clearBtn.style.marginTop = '10px';
+                    clearBtn.innerHTML = '&#10005; Clear All Lab Outcomes';
+                    clearBtn.onclick = function () {
+                        group.innerHTML = '';
+                        document.getElementById('addLOBtn').disabled = false;
+                        this.remove();
+                    };
+                    group.parentNode.insertBefore(clearBtn, document.getElementById('addLOBtn').nextSibling);
+                }
+
+            } else if (rows.length < MAX_LO) {
+                const num = rows.length + 1;
+                const row = document.createElement('div');
+                row.className = 'point-row lo-row';
+                row.innerHTML = `
+                     <span class="point-number">${num}.</span>
+                     <input type="text" class="form-control" name="labOutcome"
+                            placeholder="Lab Outcome ${num}" required maxlength="300">
+                     <div class="co-level-group">
+                         <label><input type="radio" name="labOutcomeYN_${num}" value="Yes" required> Yes</label>
+                         <label><input type="radio" name="labOutcomeYN_${num}" value="No"> No</label>
+                     </div>
+                     <button type="button" class="btn-remove-point" onclick="removeLOPoint(this)">&#10005; Remove</button>
+                 `;
+                group.appendChild(row);
+            }
+
+            renumberLO();
+            if (group.querySelectorAll('.lo-row').length >= MAX_LO) {
+                document.getElementById('addLOBtn').disabled = true;
+            }
+            // Focus on the first element added this batch
+            group.querySelector('input[type="text"]:last-of-type')?.focus();
+        }
+
+        function removeLOPoint(btn) {
+            const group = document.getElementById('loGroup');
+            if (group.querySelectorAll('.lo-row').length <= MIN_LO) return;
+            btn.closest('.lo-row').remove();
+            renumberLO();
+            document.getElementById('addLOBtn').disabled = false;
+        }
+
+
+        /* ---- Dynamic Points Logic ---- */
+        const MAX_POINTS = 4;
+
+        function renumberGroup(groupId) {
+            const group = document.getElementById(groupId);
+            const rows = group.querySelectorAll('.point-row');
+            const minPoints = parseInt(group.dataset.min ?? '1');
+            rows.forEach((row, idx) => {
+                row.querySelector('.point-number').textContent = (idx + 1) + '.';
+                const btn = row.querySelector('.btn-remove-point');
+                btn.style.visibility = rows.length > minPoints ? 'visible' : 'hidden';
+            });
+        }
+
+        function addPoint(groupId, fieldName, addBtnId, labelPrefix) {
+            const group = document.getElementById(groupId);
+            const rows = group.querySelectorAll('.point-row');
+            const maxPoints = parseInt(group.dataset.max ?? MAX_POINTS);
+            if (rows.length >= maxPoints) return;
+
+            const newIndex = rows.length + 1;
+            const row = document.createElement('div');
+            row.className = 'point-row';
+            row.innerHTML = `
+                <span class="point-number">${newIndex}.</span>
+                <input type="text" class="form-control" name="${fieldName}"
+                       placeholder="${labelPrefix} ${newIndex}" required maxlength="300">
+                <button type="button" class="btn-remove-point"
+                        onclick="removePoint(this, '${groupId}')">&#10005; Remove</button>
+            `;
+            group.appendChild(row);
+            renumberGroup(groupId);
+
+            if (group.querySelectorAll('.point-row').length >= maxPoints) {
+                document.getElementById(addBtnId).disabled = true;
+            }
+            row.querySelector('input').focus();
+        }
+
+        function removePoint(btn, groupId) {
+            const group = document.getElementById(groupId);
+            const rows = group.querySelectorAll('.point-row');
+            const minPoints = parseInt(group.dataset.min ?? '1');
+            if (rows.length <= minPoints) return;
+            btn.closest('.point-row').remove();
+            renumberGroup(groupId);
+
+            const addBtnMap = {
+                'objectivesGroup': 'addObjectiveBtn',
+                'outcomesGroup': 'addOutcomeBtn',
+                'conclusionGroup': 'addConclusionBtn',
+                'facultyGroup': 'addFacultyBtn'
+            };
+            const maxPoints = parseInt(group.dataset.max ?? MAX_POINTS);
+            const addBtn = document.getElementById(addBtnMap[groupId]);
+            if (addBtn && group.querySelectorAll('.point-row').length < maxPoints) {
+                addBtn.disabled = false;
+            }
+        }
+
+        /* ---- Faculty-specific add (no required attr) ---- */
+        function addFacultyPoint() {
+            const group = document.getElementById('facultyGroup');
+            const rows = group.querySelectorAll('.point-row');
+            if (rows.length >= MAX_POINTS) return;
+
+            const newIndex = rows.length + 1;
+            const row = document.createElement('div');
+            row.className = 'point-row';
+            row.innerHTML = `
+                <span class="point-number">${newIndex}.</span>
+                <input type="text" class="form-control" name="facultyCoordinators"
+                       placeholder="Faculty Coordinator ${newIndex}" maxlength="200">
+                <button type="button" class="btn-remove-point"
+                        onclick="removePoint(this, 'facultyGroup')">&#10005; Remove</button>
+            `;
+            group.appendChild(row);
+            renumberGroup('facultyGroup');
+
+            if (group.querySelectorAll('.point-row').length >= MAX_POINTS) {
+                document.getElementById('addFacultyBtn').disabled = true;
+            }
+            row.querySelector('input').focus();
+        }
+
+        /* ---- Generate Report ---- */
+        function generateReport() {
+            var form = document.getElementById('reportForm');
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return;
+            }
+
+            var conclEditor = document.getElementById('conclusionParagraphEditor');
+            var conclHidden = document.getElementById('conclusionParagraph');
+            conclHidden.value = conclEditor.innerHTML;
+
+            var conclText = conclEditor.innerText || conclEditor.textContent;
+            var wordCount = conclText.trim() ? conclText.trim().split(/\s+/).length : 0;
+            if (wordCount === 0) {
+                alert('Please enter the conclusion paragraph.');
+                return;
+            }
+            if (wordCount > 55) {
+                alert('Conclusion word limit is max 55 words. Currently you have ' + wordCount + ' words.');
+                return;
+            }
+
+            var formData = new FormData(form);
+            var btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+
+            fetch('/generate_report', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('actionContainer').style.display = 'none';
+                        document.getElementById('downloadContainer').style.display = 'block';
+                        var filename = encodeURIComponent(data.filename);
+                        document.getElementById('previewPdfBtn').href = '/download/' + data.report_id + '/pdf?filename=' + filename + '&preview=1';
+                        document.getElementById('downloadWordBtn').href = '/download/' + data.report_id + '/word?filename=' + filename;
+                        document.getElementById('downloadPdfBtn').href = '/download/' + data.report_id + '/pdf?filename=' + filename;
+                    } else {
+                        alert('Error: ' + data.error);
+                        btn.disabled = false;
+                        btn.innerHTML = 'Generate Report';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Check browser console.');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Generate Report';
+                });
+        }
+
+        /* ---- Edit Form ---- */
+        function editForm() {
+            document.getElementById('downloadContainer').style.display = 'none';
+            document.getElementById('actionContainer').style.display = 'block';
+
+            var btn = document.getElementById('generateBtn');
+            btn.disabled = false;
+            btn.innerHTML = 'Update Report';
+        }
+
+        /* ---- Reset Form ---- */
+        function resetForm() {
+            ['objectivesGroup', 'outcomesGroup'].forEach(function (groupId) {
+                const group = document.getElementById(groupId);
+                const rows = group.querySelectorAll('.point-row');
+                const minRows = parseInt(group.dataset.min ?? '1');
+                rows.forEach((row, idx) => {
+                    if (idx >= minRows) { row.remove(); return; }
+                    const inp = row.querySelector('input[type="text"]');
+                    if (inp) inp.value = '';
+                });
+                renumberGroup(groupId);
+            });
+            // Reset Course Objectives to 3 clean rows
+            const coGroup = document.getElementById('coGroup');
+            coGroup.querySelectorAll('.co-row').forEach((row, idx) => {
+                if (idx >= MIN_CO) { row.remove(); return; }
+                row.querySelector('input[type="text"]').value = '';
+                row.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            });
+            document.getElementById('addCOBtn').disabled = false;
+            renumberCO();
+            // Reset Theory Outcomes to 3 clean rows
+            const toGroup = document.getElementById('toGroup');
+            toGroup.querySelectorAll('.to-row').forEach((row, idx) => {
+                if (idx >= MIN_TO) { row.remove(); return; }
+                row.querySelector('input[type="text"]').value = '';
+                row.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            });
+            document.getElementById('addTOBtn').disabled = false;
+            renumberTO();
+            // Clear optional faculty group entirely
+            document.getElementById('facultyGroup').querySelectorAll('.point-row').forEach(r => r.remove());
+            // Clear optional lab outcomes entirely
+            document.getElementById('loGroup').innerHTML = '';
+            const clearBtn = document.getElementById('clearLOBtn');
+            if (clearBtn) clearBtn.remove();
+            document.getElementById('addLOBtn').disabled = false;
+            // Re-enable all Add buttons
+            ['addObjectiveBtn', 'addOutcomeBtn', 'addFacultyBtn', 'addLOBtn'].forEach(function (id) {
+                const btn = document.getElementById(id);
+                if (btn) btn.disabled = false;
+            });
+            // Clear conclusion RTE
+            var conclEditor = document.getElementById('conclusionParagraphEditor');
+            if (conclEditor) conclEditor.innerHTML = '';
+            var conclHidden = document.getElementById('conclusionParagraph');
+            if (conclHidden) conclHidden.value = '';
+
+            document.getElementById('reportForm').reset();
+            document.getElementById('reportForm').classList.remove('was-validated');
+            document.getElementById('actionContainer').style.display = 'block';
+            document.getElementById('downloadContainer').style.display = 'none';
+            document.getElementById('generateBtn').disabled = false;
+            document.getElementById('generateBtn').innerHTML = 'Generate Report';
+            document.getElementById('dynamicTitleDisplay').textContent = 'REPORT';
+        }
+
+        const reportTitleInput = document.getElementById('reportTitle');
+        const dynamicTitleDisplay = document.getElementById('dynamicTitleDisplay');
+
+        reportTitleInput.addEventListener('input', function () {
+            const val = this.value.trim().toUpperCase();
+            dynamicTitleDisplay.textContent = val ? val : 'REPORT';
+            document.title = val ? val + ' - Generator' : 'Report Generator';
+        });
+
+        // Form Validation (Bootstrap)
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault(); // always prevent default native submit
+                    event.stopPropagation();
+                    if (!form.checkValidity()) {
+                        form.classList.add('was-validated');
+                    } else {
+                        generateReport();
+                    }
+                }, false)
+            })
+        })()
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
