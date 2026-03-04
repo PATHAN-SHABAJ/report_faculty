@@ -69,15 +69,28 @@ class DocxRTEParser(HTMLParser):
             if self.highlight:
                 run.font.highlight_color = getattr(self, 'highlight_color', WD_COLOR_INDEX.YELLOW)
 
-# For PDF conversion
-import platform
-if platform.system() == 'Windows':
-    try:
-        from docx2pdf import convert
-    except ImportError:
-        convert = None
-else:
-    convert = None
+import subprocess
+
+def convert(input_path, output_path):
+    if platform.system() == 'Windows':
+        import pythoncom
+        try:
+            from docx2pdf import convert as windows_convert
+            pythoncom.CoInitialize()
+            windows_convert(input_path, output_path)
+            pythoncom.CoUninitialize()
+        except ImportError:
+            raise Exception("docx2pdf is not installed on Windows")
+    else:
+        # Linux / Render approach using LibreOffice
+        try:
+            subprocess.run(['libreoffice', '--headless', '--convert-to', 'pdf', '--outdir', os.path.dirname(output_path), input_path], check=True, capture_output=True)
+            # libreoffice saves it exactly as input_name.pdf, rename it to what we actually wanted
+            original_output = os.path.join(os.path.dirname(output_path), os.path.splitext(os.path.basename(input_path))[0] + ".pdf")
+            if original_output != output_path and os.path.exists(original_output):
+                os.rename(original_output, output_path)
+        except Exception as e:
+            raise Exception(f"LibreOffice conversion failed: {str(e)}")
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
@@ -633,15 +646,9 @@ def download(report_id, format):
     
     if format == 'pdf':
         pdf_path = os.path.join(app.config['TEMP_FOLDER'], f"{report_id}.pdf")
-        if convert is None:
-            return "PDF conversion not available on this server", 500
-        
         if not os.path.exists(pdf_path):
             try:
-                import pythoncom
-                pythoncom.CoInitialize()
                 convert(docx_path, pdf_path)
-                pythoncom.CoUninitialize()
             except Exception as e:
                 return f"PDF Conversion Failed: {str(e)}", 500
                 
