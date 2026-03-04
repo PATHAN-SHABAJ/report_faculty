@@ -9,6 +9,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT, WD_COLOR_INDEX
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from html.parser import HTMLParser
+import platform
 
 class DocxRTEParser(HTMLParser):
     def __init__(self, paragraph):
