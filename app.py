@@ -200,17 +200,25 @@ def generate_report():
         img = Image.new('RGBA', (canvas_w, canvas_h), (255, 255, 255, 255))
         draw = ImageDraw.Draw(img)
         
-        # Load fonts (Georgia from Windows)
-        font_dir = r'C:\Windows\Fonts'
+        # Load fonts — use bundled fonts first (works on Linux/Render), fallback to Windows
+        bundled_font_dir = os.path.join(app.root_path, 'static', 'fonts')
+        windows_font_dir = r'C:\Windows\Fonts'
+        font_dir = bundled_font_dir if os.path.exists(bundled_font_dir) else windows_font_dir
         try:
             # Match CSS: h2 = 1.4rem (~16pt), p = 1.1rem (~12pt), h3 = 1.25rem (~14pt)
             font_college = ImageFont.truetype(os.path.join(font_dir, 'georgia.ttf'), int(16 * SCALE))
             font_sub = ImageFont.truetype(os.path.join(font_dir, 'georgia.ttf'), int(12 * SCALE))
             font_dept = ImageFont.truetype(os.path.join(font_dir, 'georgiab.ttf'), int(13 * SCALE))
         except Exception:
-            font_college = ImageFont.load_default()
-            font_sub = font_college
-            font_dept = font_college
+            # Final fallback — try Windows fonts if bundled fonts fail
+            try:
+                font_college = ImageFont.truetype(os.path.join(windows_font_dir, 'georgia.ttf'), int(16 * SCALE))
+                font_sub = ImageFont.truetype(os.path.join(windows_font_dir, 'georgia.ttf'), int(12 * SCALE))
+                font_dept = ImageFont.truetype(os.path.join(windows_font_dir, 'georgiab.ttf'), int(13 * SCALE))
+            except Exception:
+                font_college = ImageFont.load_default()
+                font_sub = font_college
+                font_dept = font_college
         
         # Colors matching CSS
         gray = (119, 119, 119)   # #777
