@@ -3,7 +3,7 @@ FROM python:3.11-slim
 
 # Install LibreOffice for PDF conversion and clean up apt cache
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libreoffice && \
+    apt-get install -y --no-install-recommends libreoffice fontconfig && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -13,6 +13,10 @@ WORKDIR /app
 # Copy requirements file first for caching
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy fonts and register them with the system
+COPY static/fonts/ /usr/share/fonts/truetype/custom/
+RUN fc-cache -f -v
 
 # Copy the rest of the application
 COPY . .
